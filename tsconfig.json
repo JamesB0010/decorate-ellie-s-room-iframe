@@ -9,8 +9,7 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": false,
-    "rewriteRelativeImportExtensions": true,
-    "allowImportingTsExtensions": true
+    "moduleResolution": "bundler"
   },
   "include": ["scripts/*.ts"],
   "exclude": ["node_modules"]

@@ -7,26 +7,19 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
         step((generator = generator.apply(thisArg, _arguments || [])).next());
     });
 };
-import * as THREE from 'three';
-//impor {GLTFLoader} from 'three/examples/jsm/loaders/GLTFLoader.ts';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 export class SceneBootstrapper {
-    //private gltfLoader: GLTFLoader = new GLTFLoader();
     constructor(scene) {
+        this.gltfLoader = new GLTFLoader();
         this.scene = scene;
     }
     createScene() {
         return __awaiter(this, void 0, void 0, function* () {
-            const geometry = new THREE.BoxGeometry(1, 1, 1);
-            const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
-            const cube = new THREE.Mesh(geometry, material);
-            this.scene.add(cube);
-            // const room = await this.gltfLoader.loadAsync("../assets/room.glb").then((gltf) => {
-            //     this.scene.add(gltf.scene);
-            // }).catch((error) => {
-            //     console.error("Error loading GLTF model:", error);
-            // });
+            const roomGLTF = yield this.gltfLoader.loadAsync("../assets/room.glb");
+            const room = roomGLTF.scene;
+            this.scene.add(room);
             return {
-                cube: cube
+                room: room
             };
         });
     }
