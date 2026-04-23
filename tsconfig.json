@@ -9,8 +9,9 @@
     "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
     "declaration": false,
-    "moduleResolution": "bundler"
+    "moduleResolution": "bundler",
+    "lib": ["ESNext", "DOM"]
   },
-  "include": ["scripts/*.ts"],
+  "include": ["scripts/*.ts", "scripts/inputActions/BaseInputAction.ts"],
   "exclude": ["node_modules"]
 }
