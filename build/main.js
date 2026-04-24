@@ -20,13 +20,10 @@ canvas.addEventListener("click", () => __awaiter(void 0, void 0, void 0, functio
         unadjustedMovement: true,
     });
 }));
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.z = 1.6;
-camera.position.y = 1;
-const sceneBuilder = new SceneBootstrapper(scene, camera, renderer);
+const sceneBuilder = new SceneBootstrapper(scene, renderer);
 let lastFrameTime = 0;
 const init = () => __awaiter(void 0, void 0, void 0, function* () {
-    const { playerController } = yield sceneBuilder.createScene();
+    const { playerController, camera } = yield sceneBuilder.createScene();
     renderer.setAnimationLoop(animate);
     function animate(time) {
         const dt = time - lastFrameTime;

@@ -1,11 +1,19 @@
 import * as THREE from 'three';
 import { KeyboardInputAction } from './inputActions/KeyboardInputAction.js';
 export class PlayerController {
-    constructor(camera, renderer, startPosX, startPosZ) {
-        this._height = 0.15;
+    get camera() {
+        return this._camera;
+    }
+    get body() {
+        return this._body;
+    }
+    constructor(renderer, startPosX, startPosZ) {
+        this._body = new THREE.Group();
+        this._height = 7;
         this._movementSettings = {
-            movementSpeed: 0.0005,
-            lookSpeed: 0.002
+            movementSpeed: 0.02,
+            horizontalLookSpeed: 0.0005,
+            verticalLookSpeed: 0.0003
         };
         this._desiredMovementDirection = new THREE.Vector3();
         this._desiredLookDirection = new THREE.Vector2();
@@ -27,8 +35,10 @@ export class PlayerController {
             "d": this._actions.movement.right,
             "ArrowRight": this._actions.movement.right
         };
-        this._camera = camera;
-        this._camera.position.set(startPosX, this._height, startPosZ);
+        this._camera = new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.1, 1000);
+        this._body.add(this._camera);
+        this._body.position.set(startPosX, 0, startPosZ);
+        this._camera.position.setY(this._height);
         this._hookIntoInputActions();
         this._hookIntoDomEvents();
     }
@@ -99,10 +109,14 @@ export class PlayerController {
         document.addEventListener("mousemove", mouseMoveHandler);
     }
     update(dt) {
-        const velocity = this._desiredMovementDirection.clone().normalize().multiplyScalar(this._movementSettings.movementSpeed * dt);
-        this._camera.position.add(velocity);
-        this._camera.rotateY(this._desiredLookDirection.x * this._movementSettings.lookSpeed * dt);
-        this._camera.rotateX(this._desiredLookDirection.y * this._movementSettings.lookSpeed * dt);
-        this._desiredLookDirection = new THREE.Vector2();
+        const { movementSpeed, horizontalLookSpeed, verticalLookSpeed } = this._movementSettings;
+        const velocity = this._desiredMovementDirection.clone()
+            .normalize()
+            .applyQuaternion(this._body.quaternion)
+            .multiplyScalar(movementSpeed * dt);
+        this._body.position.add(velocity);
+        this._body.rotateY(this._desiredLookDirection.x * horizontalLookSpeed * dt);
+        this._camera.rotateX(this._desiredLookDirection.y * verticalLookSpeed * dt);
+        this._desiredLookDirection.multiplyScalar(0.7);
     }
 }

@@ -4,18 +4,29 @@ import {KeyboardInputAction} from './inputActions/KeyboardInputAction.js';
 export interface PlayerControllerMovementSettings
 {
     movementSpeed: number;
-    lookSpeed: number;
+    horizontalLookSpeed: number;
+    verticalLookSpeed: number;
 }
 
 
 export class PlayerController
 {
     private _camera: THREE.Camera;
-    private _height = 0.15;
+    public get camera(): THREE.Camera {
+        return this._camera;
+    }
+
+    private _body: THREE.Group = new THREE.Group();
+    public get body(): THREE.Group {
+        return this._body;
+    }
+
+    private _height = 7;
 
     private _movementSettings: PlayerControllerMovementSettings = {
-        movementSpeed: 0.0005,
-        lookSpeed: 0.002
+        movementSpeed: 0.02,
+        horizontalLookSpeed: 0.0005,
+        verticalLookSpeed: 0.0003
     };
 
     private _desiredMovementDirection = new THREE.Vector3();
@@ -43,9 +54,11 @@ export class PlayerController
         "ArrowRight": this._actions.movement.right
     } as Record<string, KeyboardInputAction>;
     
-    public constructor(camera: THREE.Camera, renderer: THREE.WebGLRenderer, startPosX: number, startPosZ: number) {
-        this._camera = camera;
-        this._camera.position.set(startPosX, this._height, startPosZ);
+    public constructor(renderer: THREE.WebGLRenderer, startPosX: number, startPosZ: number) {
+        this._camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
+        this._body.add(this._camera);
+        this._body.position.set(startPosX, 0, startPosZ);
+        this._camera.position.setY(this._height);
 
         this._hookIntoInputActions();
         this._hookIntoDomEvents();
@@ -138,12 +151,17 @@ export class PlayerController
     }
 
     public update(dt: number) {
-        const velocity = this._desiredMovementDirection.clone().normalize().multiplyScalar(this._movementSettings.movementSpeed * dt);
-        this._camera.position.add(velocity);
+        const {movementSpeed, horizontalLookSpeed, verticalLookSpeed} = this._movementSettings;
 
-        this._camera.rotateY(this._desiredLookDirection.x * this._movementSettings.lookSpeed * dt);
-        this._camera.rotateX(this._desiredLookDirection.y * this._movementSettings.lookSpeed * dt);
+        const velocity = this._desiredMovementDirection.clone()
+            .normalize()
+            .applyQuaternion(this._body.quaternion)
+            .multiplyScalar(movementSpeed * dt);
+        this._body.position.add(velocity);
 
-        this._desiredLookDirection = new THREE.Vector2();
+        this._body.rotateY(this._desiredLookDirection.x * horizontalLookSpeed * dt);
+        this._camera.rotateX(this._desiredLookDirection.y * verticalLookSpeed * dt);
+
+        this._desiredLookDirection.multiplyScalar(0.7);
     }
 }

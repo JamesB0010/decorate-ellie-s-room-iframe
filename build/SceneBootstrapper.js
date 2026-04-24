@@ -10,21 +10,23 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { PlayerController } from './PlayerController.js';
 export class SceneBootstrapper {
-    constructor(scene, camera, renderer) {
+    constructor(scene, renderer) {
         this.gltfLoader = new GLTFLoader();
         this.scene = scene;
-        this.camera = camera;
         this.renderer = renderer;
     }
     createScene() {
         return __awaiter(this, void 0, void 0, function* () {
             const roomGLTF = yield this.gltfLoader.loadAsync("../assets/room.glb");
             const room = roomGLTF.scene;
+            room.scale.set(40, 40, 40);
             this.scene.add(room);
-            const playerController = new PlayerController(this.camera, this.renderer, 0, 0);
+            const playerController = new PlayerController(this.renderer, 0, 0);
+            this.scene.add(playerController.body);
             return {
                 room: room,
-                playerController: playerController
+                playerController: playerController,
+                camera: playerController.camera
             };
         });
     }

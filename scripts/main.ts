@@ -17,16 +17,12 @@ canvas.addEventListener("click", async () => {
   });
 });
 
-const camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-camera.position.z = 1.6;
-camera.position.y = 1;
-
-const sceneBuilder = new SceneBootstrapper(scene, camera, renderer);
+const sceneBuilder = new SceneBootstrapper(scene, renderer);
 
 
 let lastFrameTime = 0;
 const init = async () => {
-  const {playerController} = await sceneBuilder.createScene();
+  const {playerController, camera} = await sceneBuilder.createScene();
   
   renderer.setAnimationLoop( animate );
 

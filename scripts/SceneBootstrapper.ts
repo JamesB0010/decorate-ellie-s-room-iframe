@@ -4,13 +4,11 @@ import { PlayerController } from './PlayerController.js';
 
 export class SceneBootstrapper {
     private scene: THREE.Scene;
-    private camera: THREE.Camera;
     private renderer: THREE.WebGLRenderer;
     private gltfLoader: GLTFLoader = new GLTFLoader();
 
-    constructor(scene: THREE.Scene, camera: THREE.Camera, renderer: THREE.WebGLRenderer) {
+    constructor(scene: THREE.Scene, renderer: THREE.WebGLRenderer) {
         this.scene = scene;
-        this.camera = camera;
         this.renderer = renderer;
     }
 
@@ -18,13 +16,16 @@ export class SceneBootstrapper {
         const roomGLTF = await this.gltfLoader.loadAsync("../assets/room.glb");
             
         const room = roomGLTF.scene;
+        room.scale.set(40, 40, 40);
         this.scene.add(room);
 
-        const playerController = new PlayerController(this.camera, this.renderer, 0, 0);
+        const playerController = new PlayerController(this.renderer, 0, 0);
+        this.scene.add(playerController.body);
 
         return {
             room: room,
-            playerController: playerController
+            playerController: playerController,
+            camera: playerController.camera
         }
     }
 }
