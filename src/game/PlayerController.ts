@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {KeyboardInputAction} from './inputActions/KeyboardInputAction.js';
+import type {InputManager} from './input/inputManager.js';
 
 export interface PlayerControllerMovementSettings
 {
@@ -33,121 +33,59 @@ export class PlayerController
 
     private _desiredLookDirection = new THREE.Vector2();
 
-
-    private _actions = {
-        movement: {
-            left: new KeyboardInputAction(),
-            right: new KeyboardInputAction(),
-            forward: new KeyboardInputAction(),
-            back: new KeyboardInputAction()
-        }
-    } as const;
-
-    private _keyToInputActions = {
-        "w": this._actions.movement.forward,
-        "ArrowUp": this._actions.movement.forward,
-        "a": this._actions.movement.left,
-        "ArrowLeft": this._actions.movement.left,
-        "s": this._actions.movement.back,
-        "ArrowDown": this._actions.movement.back,
-        "d": this._actions.movement.right,
-        "ArrowRight": this._actions.movement.right
-    } as Record<string, KeyboardInputAction>;
     
-    public constructor(startPosX: number, startPosZ: number) {
+    public constructor(inputManager: InputManager, startPosX: number, startPosZ: number) {
         this._camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this._body.add(this._camera);
         this._body.position.set(startPosX, 0, startPosZ);
         this._camera.position.setY(this._height);
 
-        this._hookIntoInputActions();
-        this._hookIntoDomEvents();
+        this._hookIntoInputManagerEvents(inputManager);
     }
 
-    private _hookIntoInputActions(): void
+    private _hookIntoInputManagerEvents(inputManager: InputManager): void
     {
-        this._actions.movement.forward.addKeyDownCallback(() =>
-        {
-            this._desiredMovementDirection.z = -1;
-        });
-        this._actions.movement.back.addKeyDownCallback(() =>
-        {
-            this._desiredMovementDirection.z = 1;
-        });
-        this._actions.movement.left.addKeyDownCallback(() =>
-        {
-            this._desiredMovementDirection.x = -1;
-        });
-        this._actions.movement.right.addKeyDownCallback(() =>
-        {
-            this._desiredMovementDirection.x = 1;
-        });
+        inputManager.addKeydownBindingToInputAction("left", this._handleMovementActionKeyDown.bind(this, "x", -1));
+        inputManager.addKeyUpBindingToInputAction("left", this._handleMovementActionKeyUp.bind(this, "x", -1));
 
-        this._actions.movement.forward.addKeyUpCallback(() =>
-        {
-            if (this._desiredMovementDirection.z < 0)
-            {
-                this._desiredMovementDirection.z = 0;
-            }
-        });
-        this._actions.movement.back.addKeyUpCallback(() =>
-        {
-            if (this._desiredMovementDirection.z > 0)
-            {
-                this._desiredMovementDirection.z = 0;
-            }
-        });
-        this._actions.movement.left.addKeyUpCallback(() =>
-        {
-            if (this._desiredMovementDirection.x < 0)
-            {
-                this._desiredMovementDirection.x = 0;
-            }
-        });
-        this._actions.movement.right.addKeyUpCallback(() =>
-        {
-            if (this._desiredMovementDirection.x > 0)
-            {
-                this._desiredMovementDirection.x = 0;
-            }
-        });
+        inputManager.addKeydownBindingToInputAction("right", this._handleMovementActionKeyDown.bind(this, "x", 1));
+        inputManager.addKeyUpBindingToInputAction("right", this._handleMovementActionKeyUp.bind(this, "x", 1));
+
+        inputManager.addKeydownBindingToInputAction("forward", this._handleMovementActionKeyDown.bind(this, "z", -1));
+        inputManager.addKeyUpBindingToInputAction("forward", this._handleMovementActionKeyUp.bind(this, "z", -1));
+
+        inputManager.addKeydownBindingToInputAction("back", this._handleMovementActionKeyDown.bind(this, "z", 1));
+        inputManager.addKeyUpBindingToInputAction("back", this._handleMovementActionKeyUp.bind(this, "z", 1));
+
+        inputManager.addMouseMoveCallback(this._onMouseMove.bind(this));
     }
 
+    private _handleMovementActionKeyDown(axis: "x" | "z", direction: -1 | 1): void
+    {
+        this._desiredMovementDirection[axis] = direction;
+    }
 
-    private _hookIntoDomEvents() {
-        const translateKeydownHandler = (event: KeyboardEvent) => {
-            console.log(`Key down: ${event.key}`);
-            const inputAction = this._keyToInputActions[event.key];
-            if (inputAction)
-            {
-                inputAction.executeKeyDown();
-            }
+    private _handleMovementActionKeyUp(axis: "x" | "z", direction: -1 | 1): void
+    {
+        if (this._desiredMovementDirection[axis] === direction)
+        {
+            this._desiredMovementDirection[axis] = 0;
+        }
+    }
+
+    private _onMouseMove({movementX, movementY}: MouseEvent): void
+    {
+        if (movementX > 0) {
+            this._desiredLookDirection.x -= 1;
+        } else if (movementX < 0) {
+            this._desiredLookDirection.x += 1;
         }
 
-        const translateKeyupHandler = (event: KeyboardEvent) => {
-            const inputAction = this._keyToInputActions[event.key];
-            if (inputAction)
-            {
-                inputAction.executeKeyUp();
-            }
+        if (movementY > 0) {
+            this._desiredLookDirection.y -= 1;
+        } else if (movementY < 0) {
+            this._desiredLookDirection.y += 1;
         }
-
-        const mouseMoveHandler = ({movementX, movementY}: MouseEvent) => {
-            if (movementX > 0) {
-                this._desiredLookDirection.x -= 1;
-            } else if (movementX < 0) {
-                this._desiredLookDirection.x += 1;
-            }
-            if (movementY > 0) {
-                this._desiredLookDirection.y -= 1;
-            } else if (movementY < 0) {
-                this._desiredLookDirection.y += 1;
-            }
-        }
-
-        document.addEventListener("keydown", translateKeydownHandler);
-        document.addEventListener("keyup", translateKeyupHandler);
-        document.addEventListener("mousemove", mouseMoveHandler);
     }
 
     public update(dt: number) {

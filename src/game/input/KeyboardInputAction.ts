@@ -1,17 +1,17 @@
 export class KeyboardInputAction 
 {
-    private _keyDownCallbacks = new Set<() => void>();
+    private _keyDownCallbacks = new Array<() => void>();
 
-    private _keyUpCallbacks = new Set<() => void>();
+    private _keyUpCallbacks = new Array<() => void>();
 
     public addKeyDownCallback(callback: () => void): void
     {
-        this._keyDownCallbacks.add(callback);
+        this._keyDownCallbacks.push(callback);
     }
 
     public addKeyUpCallback(callback: () => void): void
     {
-        this._keyUpCallbacks.add(callback);
+        this._keyUpCallbacks.push(callback);
     }
 
     public executeKeyDown(): void
