@@ -1,7 +1,6 @@
 import * as THREE from 'three';
 import {SceneBootstrapper} from './SceneBootstrapper.js';
 
-
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf8d840);
 
@@ -17,7 +16,7 @@ canvas.addEventListener("click", async () => {
   });
 });
 
-const sceneBuilder = new SceneBootstrapper(scene, renderer);
+const sceneBuilder = new SceneBootstrapper(scene);
 
 
 let lastFrameTime = 0;

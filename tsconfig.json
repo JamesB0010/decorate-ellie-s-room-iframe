@@ -1,17 +1,7 @@
 {
-  "compilerOptions": {
-    "target": "ES2015",
-    "module": "ESNext",
-    "outDir": "./build",
-    "rootDir": "./scripts",
-    "strict": true,
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "forceConsistentCasingInFileNames": true,
-    "declaration": false,
-    "moduleResolution": "bundler",
-    "lib": ["ESNext", "DOM"]
-  },
-  "include": ["scripts/*.ts", "scripts/inputActions/BaseInputAction.ts"],
-  "exclude": ["node_modules"]
+  "files": [],
+  "references": [
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.node.json" }
+  ]
 }

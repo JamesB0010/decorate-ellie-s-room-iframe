@@ -54,7 +54,7 @@ export class PlayerController
         "ArrowRight": this._actions.movement.right
     } as Record<string, KeyboardInputAction>;
     
-    public constructor(renderer: THREE.WebGLRenderer, startPosX: number, startPosZ: number) {
+    public constructor(startPosX: number, startPosZ: number) {
         this._camera = new THREE.PerspectiveCamera( 90, window.innerWidth / window.innerHeight, 0.1, 1000 );
         this._body.add(this._camera);
         this._body.position.set(startPosX, 0, startPosZ);

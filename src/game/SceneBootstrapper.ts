@@ -1,15 +1,13 @@
 import * as THREE from 'three';
-import {GLTF, GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import { PlayerController } from './PlayerController.js';
 
 export class SceneBootstrapper {
     private scene: THREE.Scene;
-    private renderer: THREE.WebGLRenderer;
     private gltfLoader: GLTFLoader = new GLTFLoader();
 
-    constructor(scene: THREE.Scene, renderer: THREE.WebGLRenderer) {
+    constructor(scene: THREE.Scene) {
         this.scene = scene;
-        this.renderer = renderer;
     }
 
     public async createScene(){
@@ -19,7 +17,7 @@ export class SceneBootstrapper {
         room.scale.set(40, 40, 40);
         this.scene.add(room);
 
-        const playerController = new PlayerController(this.renderer, 0, 0);
+        const playerController = new PlayerController(0, 0);
         this.scene.add(playerController.body);
 
         return {

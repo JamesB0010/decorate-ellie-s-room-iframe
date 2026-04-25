@@ -1,0 +1,13 @@
+body{
+    margin: 0px;
+    padding: 0px;
+    overflow: hidden;
+}
+
+#root{
+  position: absolute;
+  inset: 0px;
+  margin: 0px;
+  padding: 0px;
+  pointer-events: none;
+}
