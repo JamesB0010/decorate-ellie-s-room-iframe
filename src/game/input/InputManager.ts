@@ -1,5 +1,5 @@
 import {KeyboardInputAction} from "./KeyboardInputAction";
-import {BoundKeys, type BoundKey, type InputActionName, type InputActions} from "./types.js";
+import {BoundKeys, type BoundKey, type InputActionName, type InputActions} from "./types";
 
 export class InputManager
 {

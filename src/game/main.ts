@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {SceneBootstrapper} from './SceneBootstrapper.js';
+import {SceneBootstrapper} from './SceneBootstrapper';
 
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf8d840);

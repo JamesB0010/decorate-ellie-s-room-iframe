@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import type {InputManager} from './input/inputManager.js';
+import {InputManager} from '../input/InputManager';
 
 export interface PlayerControllerMovementSettings
 {

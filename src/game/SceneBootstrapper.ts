@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import { PlayerController } from './PlayerController.js';
-import { InputManager } from './input/inputManager.js';
+import { PlayerController } from './player/PlayerController';
+import { InputManager } from "./input/InputManager";
 
 export class SceneBootstrapper {
     private scene: THREE.Scene;
