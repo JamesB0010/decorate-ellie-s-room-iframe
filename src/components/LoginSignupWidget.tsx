@@ -1,25 +1,27 @@
 import {type LoginSignUpWidgetModes, LoginSignupWidgetModeStrings} from "../constants/LoginSignupWidgetModes";
-import {createRef} from "react";
+import {createRef, type SubmitEvent} from "react";
 
 export interface LoginSignupWidgetProps{
     mode: LoginSignUpWidgetModes
 }
+
 
 export const LoginSignupWidget = ({mode}: LoginSignupWidgetProps) =>
 {
     const usernameInput = createRef<HTMLInputElement>();
     const passwordInput = createRef<HTMLInputElement>();
 
-    const formSubmit = (event: SubmitEvent) =>
+    const formSubmit = (event: SubmitEvent<HTMLFormElement>) =>
     {
-        if (usernameInput.current?.value.length === 0 || passwordInput.current?.value.length === 0)
-        {
+        if (
+            usernameInput.current?.value.length === 0 ||
+            passwordInput.current?.value.length === 0
+        ) {
             event.preventDefault();
-        }
-        else {
+        } else {
             alert("form submitted");
         }
-    }
+    };
     
 
     const modeString = LoginSignupWidgetModeStrings[mode];
