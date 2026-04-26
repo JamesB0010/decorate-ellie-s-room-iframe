@@ -1,39 +1,53 @@
-import * as THREE from 'three';
+import type { PlayerController } from './player/PlayerController';
 import {SceneBootstrapper} from './SceneBootstrapper';
+import {Scene, Color, WebGLRenderer, Camera} from 'three';
 
-const scene = new THREE.Scene();
-scene.background = new THREE.Color(0xf8d840);
+interface AnimateCallbackDepednencies{
+  playerController: PlayerController,
+  camera: Camera
+}
 
-const renderer = new THREE.WebGLRenderer({});
-const {domElement: canvas} = renderer;
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
-
-
-canvas.addEventListener("click", async () => {
-  await canvas.requestPointerLock({
-    unadjustedMovement: true,
-  });
-});
-
-const sceneBuilder = new SceneBootstrapper(scene);
+export class Game{
+  private _renderer: WebGLRenderer;
+  private _scene: Scene;
+  private _lastFrameTime = 0;
+  private set lastFrameTime(time: number){
+    this._deltaTime = time - this._lastFrameTime;
+    this._lastFrameTime = time; 
+  }
+  private _deltaTime = 0;
 
 
-let lastFrameTime = 0;
-const init = async () => {
-  const {playerController, camera} = await sceneBuilder.createScene();
-  
-  renderer.setAnimationLoop( animate );
+  public constructor()
+  {
+    const scene = this._scene = new Scene();
+    scene.background = new Color(0xf8d840);
 
-  function animate( time: number ) {
-    const dt = time - lastFrameTime;
-    lastFrameTime = time;
+    const renderer = this._renderer = new WebGLRenderer({});
+    renderer.setSize( window.innerWidth, window.innerHeight );
+    document.body.appendChild( renderer.domElement );
 
-    playerController.update(dt);
+    this._init();
+  }
 
-    renderer.render( scene, camera );
+  private async _init()
+  {
+    const {_renderer: renderer} = this;
+    const sceneBuilder = new SceneBootstrapper(this._scene);
+    const sceneBuiltObjects = await sceneBuilder.createScene();
+
+      renderer.setAnimationLoop( (time: number) => {
+        this._animate(sceneBuiltObjects, time)
+      });
+  }
+
+  private _animate({playerController, camera}: AnimateCallbackDepednencies, time: number)
+  {
+    this.lastFrameTime = time;
+
+    playerController.update(this._deltaTime);
+    
+    this._renderer.render(this._scene, camera)
   }
 }
 
-
-init();

@@ -2,6 +2,9 @@ import {Link} from "react-router-dom"
 import { LoginSignupWidget } from "../components/LoginSignupWidget"
 
 export const SignUp = () => {
+  const signUpSubmit = useCallback((event: SubmitEvent<HTMLFormElement>) =>{
+    }, []);
+
   return (
     <div>
       <h1>SignUp 💚</h1>
@@ -9,7 +12,7 @@ export const SignUp = () => {
       <br />
       <Link to="/Login">Log in</Link>
       <br />
-      <LoginSignupWidget mode="SignUp" />
+      <LoginSignupWidget mode="SignUp" onSubmit={signUpSubmit}/>
     </div>
   )
 }

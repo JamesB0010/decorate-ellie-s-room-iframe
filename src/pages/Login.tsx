@@ -1,7 +1,12 @@
 import {Link} from "react-router-dom"
 import { LoginSignupWidget } from "../components/LoginSignupWidget"
+import {useCallback, type SubmitEvent} from "react"
 
 export const Login = () => {
+
+  const loginSubmit = useCallback((event: SubmitEvent<HTMLFormElement>) =>{
+  }, []);
+
   return (
     <div>
       <h1>Login 💚</h1>
@@ -9,7 +14,7 @@ export const Login = () => {
       <br />
       <Link to="/SignUp">Sign Up</Link>
       <br />
-      <LoginSignupWidget mode={"Login"}/>
+      <LoginSignupWidget mode={"Login"} onSubmit={loginSubmit}/>
     </div>
   )
 }

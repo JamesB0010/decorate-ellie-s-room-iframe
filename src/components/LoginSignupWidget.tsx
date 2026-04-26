@@ -2,7 +2,8 @@ import {type LoginSignUpWidgetModes, LoginSignupWidgetModeStrings} from "../cons
 import {createRef, type SubmitEvent} from "react";
 
 export interface LoginSignupWidgetProps{
-    mode: LoginSignUpWidgetModes
+    mode: LoginSignUpWidgetModes,
+    onSubmit: (event: SubmitEvent<HTMLFormElement>) => void;
 }
 
 
