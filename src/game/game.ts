@@ -37,8 +37,15 @@ export class Game{
     if (!this._mountedToDom)
     {
       document.body.appendChild(this._renderer.domElement);
+
+      window.addEventListener("resize", this._onResize.bind(this));
+
       this._mountedToDom = true;
     }
+  }
+
+  private _onResize(){
+    this._renderer.setSize(window.innerWidth, window.innerHeight)
   }
 
   public async start()
