@@ -48,6 +48,10 @@ export class Game{
 
     this._mountToDom();
 
+    this._renderer.domElement.requestPointerLock({
+      unadjustedMovement: true
+    });
+
     renderer.setAnimationLoop( (time: number) => {
       this._animate(sceneBuiltObjects, time)
     });

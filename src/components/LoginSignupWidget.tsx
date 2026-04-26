@@ -9,12 +9,13 @@ export interface LoginSignupWidgetProps{
 
 export const LoginSignupWidget = ({mode, onSubmit}: LoginSignupWidgetProps) =>
 {
-    const usernameInput = createRef<HTMLInputElement>();
-    const passwordInput = createRef<HTMLInputElement>();
+    const usernameInputRef = createRef<HTMLInputElement>();
+    const passwordInputRef = createRef<HTMLInputElement>();
+    const actionButtonRef = createRef<HTMLButtonElement>();
 
     const formSubmit = (event: SubmitEvent<HTMLFormElement>) =>
     {
-        if (!usernameInput.current || !passwordInput.current)
+        if (!usernameInputRef.current || !passwordInputRef.current)
         {
             return;
         }
@@ -22,12 +23,15 @@ export const LoginSignupWidget = ({mode, onSubmit}: LoginSignupWidgetProps) =>
         event.preventDefault();
 
         if (
-            usernameInput.current.value.length !== 0 &&
-            passwordInput.current.value.length !== 0
+            usernameInputRef.current.value.length !== 0 &&
+            passwordInputRef.current.value.length !== 0
         ){
             onSubmit(event);
-            usernameInput.current.value = "";
-            passwordInput.current.value = "";
+            usernameInputRef.current.value = "";
+            passwordInputRef.current.value = "";
+            usernameInputRef.current.blur();
+            passwordInputRef.current.blur();
+            actionButtonRef.current?.blur();
         }
     };
     
@@ -36,11 +40,11 @@ export const LoginSignupWidget = ({mode, onSubmit}: LoginSignupWidgetProps) =>
     return (
         <form onSubmit={formSubmit}>
             <h2>{modeString}</h2>   
-            <input id = "usernameInput" type="text" placeholder="Username" ref={usernameInput}/>
+            <input id = "usernameInput" type="text" placeholder="Username" ref={usernameInputRef}/>
             <br />
-            <input id = "passwordInput" type="password" placeholder="Password" ref={passwordInput}/>
+            <input id = "passwordInput" type="password" placeholder="Password" ref={passwordInputRef}/>
             <br />
-            <button type="submit">{modeString}</button>
+            <button type="submit" ref={actionButtonRef}>{modeString}</button>
         </form>
     )
 }
