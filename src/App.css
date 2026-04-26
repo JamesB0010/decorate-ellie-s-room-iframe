@@ -4,6 +4,12 @@ body{
     overflow: hidden;
 }
 
+canvas{
+  inset: 0px;
+  width: 100%;
+  height: 100%;
+}
+
 #root{
   position: absolute;
   inset: 0px;
