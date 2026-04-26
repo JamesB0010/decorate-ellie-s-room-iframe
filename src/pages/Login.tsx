@@ -1,10 +1,12 @@
 import {Link} from "react-router-dom"
 import { LoginSignupWidget } from "../components/LoginSignupWidget"
 import {useCallback, type SubmitEvent} from "react"
+import {game} from "../index"
 
 export const Login = () => {
 
   const loginSubmit = useCallback((event: SubmitEvent<HTMLFormElement>) =>{
+    game.start();
   }, []);
 
   return (

@@ -7,20 +7,27 @@ export interface LoginSignupWidgetProps{
 }
 
 
-export const LoginSignupWidget = ({mode}: LoginSignupWidgetProps) =>
+export const LoginSignupWidget = ({mode, onSubmit}: LoginSignupWidgetProps) =>
 {
     const usernameInput = createRef<HTMLInputElement>();
     const passwordInput = createRef<HTMLInputElement>();
 
     const formSubmit = (event: SubmitEvent<HTMLFormElement>) =>
     {
+        if (!usernameInput.current || !passwordInput.current)
+        {
+            return;
+        }
+
+        event.preventDefault();
+
         if (
-            usernameInput.current?.value.length === 0 ||
-            passwordInput.current?.value.length === 0
-        ) {
-            event.preventDefault();
-        } else {
-            alert("form submitted");
+            usernameInput.current.value.length !== 0 &&
+            passwordInput.current.value.length !== 0
+        ){
+            onSubmit(event);
+            usernameInput.current.value = "";
+            passwordInput.current.value = "";
         }
     };
     

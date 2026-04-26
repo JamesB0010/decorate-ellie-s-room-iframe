@@ -16,6 +16,9 @@ export class Game{
     this._lastFrameTime = time; 
   }
   private _deltaTime = 0;
+  private _mountedToDom = false;
+
+  private _sceneBootstrapper: SceneBootstrapper;
 
 
   public constructor()
@@ -23,22 +26,31 @@ export class Game{
     const scene = this._scene = new Scene();
     scene.background = new Color(0xf8d840);
 
+    this._sceneBootstrapper = new SceneBootstrapper(scene);
+
     const renderer = this._renderer = new WebGLRenderer({});
     renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
-
-    this._init();
   }
 
-  private async _init()
+  private _mountToDom()
+  {
+    if (!this._mountedToDom)
+    {
+      document.body.appendChild(this._renderer.domElement);
+      this._mountedToDom = true;
+    }
+  }
+
+  public async start()
   {
     const {_renderer: renderer} = this;
-    const sceneBuilder = new SceneBootstrapper(this._scene);
-    const sceneBuiltObjects = await sceneBuilder.createScene();
+    const sceneBuiltObjects = await this._sceneBootstrapper.createScene();
 
-      renderer.setAnimationLoop( (time: number) => {
-        this._animate(sceneBuiltObjects, time)
-      });
+    this._mountToDom();
+
+    renderer.setAnimationLoop( (time: number) => {
+      this._animate(sceneBuiltObjects, time)
+    });
   }
 
   private _animate({playerController, camera}: AnimateCallbackDepednencies, time: number)
