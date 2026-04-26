@@ -10,3 +10,10 @@ body{
   margin: 0px;
   padding: 0px;
 }
+
+#gameUiContaier{
+  position: absolute;
+  inset: 0px;
+  width: 100%;
+  height: 100%;
+}

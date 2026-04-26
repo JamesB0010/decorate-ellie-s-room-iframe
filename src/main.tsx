@@ -5,6 +5,7 @@ import './App.css'
 import {HomePage} from './pages/HomePage.tsx'
 import {Login} from './pages/Login.tsx'
 import {SignUp} from './pages/SignUp.tsx'
+import { GameUi } from './pages/GameUi.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -13,6 +14,7 @@ createRoot(document.getElementById('root')!).render(
         <Route path="/" element={<HomePage />}/>
         <Route path="/Login" element={< Login/>} />
         <Route path="/SignUp" element={<SignUp />} />
+        <Route path="/Game" element={<GameUi />} />
       </Routes>
     </BrowserRouter>
   </StrictMode>
