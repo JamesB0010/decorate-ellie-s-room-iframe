@@ -43,6 +43,21 @@ export class InputManager
         this._mouseMoveCallbacks.push(callback);
     }
 
+    public removeKeyDownBindingFromInputAction(action: InputActionName, callback: () => void): void
+    {
+        this._actions[action].removeKeyDownCallback(callback);
+    }
+
+    public removeKeyUpBindingFromInputAction(action: InputActionName, callback: () => void): void
+    {
+        this._actions[action].removeKeyUpCallback(callback);
+    }
+
+    public removeMouseMoveCallback(callback: (event: MouseEvent) => void): void
+    {
+        this._mouseMoveCallbacks = this._mouseMoveCallbacks.filter(existingCallback => existingCallback !== callback);
+    }
+
     private _hookIntoDomEvents() {
         const translateKeydownHandler = (event: KeyboardEvent) => {
             if (event.key in BoundKeys)

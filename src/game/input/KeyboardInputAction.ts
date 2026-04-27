@@ -14,6 +14,16 @@ export class KeyboardInputAction
         this._keyUpCallbacks.push(callback);
     }
 
+    public removeKeyDownCallback(callback: () => void): void
+    {
+        this._keyDownCallbacks = this._keyDownCallbacks.filter(existingCallback => existingCallback !== callback);
+    }
+
+    public removeKeyUpCallback(callback: () => void): void
+    {
+        this._keyUpCallbacks = this._keyUpCallbacks.filter(existingCallback => existingCallback !== callback);
+    }
+
     public executeKeyDown(): void
     {
         this._keyDownCallbacks.forEach((callback) =>

@@ -1,13 +1,14 @@
 import {Group, Scene} from "three"
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
-import { PlayerController } from './player/PlayerController';
+import { PlayerController, type playerControllerConstructorParams } from './player/PlayerController';
 import { InputManager } from "./input/InputManager";
+import { logicObject } from "./LogicObject";
 
 type LoadedAssetNames = "room"
 
 export class SceneBootstrapper {
-    private scene: Scene;
-    private gltfLoader: GLTFLoader = new GLTFLoader();
+    private _scene: Scene;
+    private _gltfLoader: GLTFLoader = new GLTFLoader();
     private _loadedAssets: Record<LoadedAssetNames, Group | undefined> = {
         room: undefined
     }
@@ -16,10 +17,10 @@ export class SceneBootstrapper {
 
     private _inputManager: InputManager;
 
-    private _playerController: PlayerController | undefined;
+    private logicObjects: logicObject[] = [];
 
     constructor(scene: Scene, inputManager: InputManager) {
-        this.scene = scene;
+        this._scene = scene;
         this._inputManager = inputManager;
         this._LoadDependencies();
     }
@@ -29,7 +30,7 @@ export class SceneBootstrapper {
         this._loadDependenciesPromise = new Promise((res) =>
         {
             (async()=>{
-                const roomGLTF = await this.gltfLoader.loadAsync("../assets/room.glb");
+                const roomGLTF = await this._gltfLoader.loadAsync("../assets/room.glb");
                 
                 const room = roomGLTF.scene;
                 room.scale.set(40, 40, 40);
@@ -43,9 +44,9 @@ export class SceneBootstrapper {
     private _AddLoadedAssetToScene(name: LoadedAssetNames)
     {
         const object = this._loadedAssets[name]; 
-        if (object && !this.scene.children.includes(object))
+        if (object && !this._scene.children.includes(object))
         {
-            this.scene.add(object);
+            this._scene.add(object);
         }
     }
 
@@ -55,24 +56,32 @@ export class SceneBootstrapper {
             await this._loadDependenciesPromise;
         }
 
+        this._clearLogicObjects();
+
         this._AddLoadedAssetToScene("room");
 
-        //todo add graceful removal of old player controller if exists
-        if (this._playerController)
-        {
-            this.scene.remove(this._playerController.body);
-            this.scene.remove(this._playerController.camera);
-            //this._playerController.unhookFromInputManagerEvents(this._inputManager);
-            this._playerController = undefined;   
-        }
-        
-        
-        this._playerController = new PlayerController(this._inputManager, 0, 0);
-        this.scene.add(this._playerController.body);
+        const playerController = this.createLogicObject<PlayerController, playerControllerConstructorParams>(PlayerController, this._inputManager, this._scene, 0, 0);
 
         return {
-            playerController: this._playerController,
-            camera: this._playerController.camera
+            playerController: playerController,
+            camera: playerController.camera
         }
+    }
+
+    private _clearLogicObjects()
+    {
+        for (const logicObject of this.logicObjects)
+        {
+            logicObject.destroy(this._scene);
+        }
+        this.logicObjects = [];
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    private createLogicObject<T extends logicObject, ConstructorArgs extends unknown[]>(LogicObjectConstructor: new (...args: ConstructorArgs) => T, ...constructorArgs: ConstructorArgs): T
+    {
+        const logicObject = new LogicObjectConstructor(...constructorArgs);
+        this.logicObjects.push(logicObject);
+        return logicObject as T;
     }
 }
