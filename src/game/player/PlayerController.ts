@@ -94,7 +94,6 @@ export class PlayerController extends logicObject
     private _handleMovementActionKeyDown(axis: "x" | "z", direction: -1 | 1): void
     {
         this._desiredMovementDirection[axis] = direction;
-        console.log("movement down");
     }
 
     private _handleMovementActionKeyUp(axis: "x" | "z", direction: -1 | 1): void
