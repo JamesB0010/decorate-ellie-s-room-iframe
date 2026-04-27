@@ -41,6 +41,10 @@ export class PlayerController
         this._camera.position.setY(this._height);
 
         this._hookIntoInputManagerEvents(inputManager);
+
+        document.addEventListener("click", () => {
+            console.log("click");
+        });
     }
 
     private _hookIntoInputManagerEvents(inputManager: InputManager): void
@@ -58,6 +62,11 @@ export class PlayerController
         inputManager.addKeyUpBindingToInputAction("back", this._handleMovementActionKeyUp.bind(this, "z", 1));
 
         inputManager.addMouseMoveCallback(this._onMouseMove.bind(this));
+    }
+
+    private _unhookFromInputManagerEvents(inputManager: InputManager): void
+    {
+
     }
 
     private _handleMovementActionKeyDown(axis: "x" | "z", direction: -1 | 1): void

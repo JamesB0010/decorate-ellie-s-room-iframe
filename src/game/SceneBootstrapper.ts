@@ -14,8 +14,13 @@ export class SceneBootstrapper {
     private _dependenciesLoaded = false;
     private _loadDependenciesPromise!: Promise<void>;
 
-    constructor(scene: Scene) {
+    private _inputManager: InputManager;
+
+    private _playerController: PlayerController | undefined;
+
+    constructor(scene: Scene, inputManager: InputManager) {
         this.scene = scene;
+        this._inputManager = inputManager;
         this._LoadDependencies();
     }
 
@@ -38,7 +43,7 @@ export class SceneBootstrapper {
     private _AddLoadedAssetToScene(name: LoadedAssetNames)
     {
         const object = this._loadedAssets[name]; 
-        if (object)
+        if (object && !this.scene.children.includes(object))
         {
             this.scene.add(object);
         }
@@ -49,16 +54,25 @@ export class SceneBootstrapper {
         {
             await this._loadDependenciesPromise;
         }
-        const inputManager = new InputManager();
 
         this._AddLoadedAssetToScene("room");
 
-        const playerController = new PlayerController(inputManager, 0, 0);
-        this.scene.add(playerController.body);
+        //todo add graceful removal of old player controller if exists
+        if (this._playerController)
+        {
+            this.scene.remove(this._playerController.body);
+            this.scene.remove(this._playerController.camera);
+            //this._playerController.unhookFromInputManagerEvents(this._inputManager);
+            this._playerController = undefined;   
+        }
+        
+        
+        this._playerController = new PlayerController(this._inputManager, 0, 0);
+        this.scene.add(this._playerController.body);
 
         return {
-            playerController: playerController,
-            camera: playerController.camera
+            playerController: this._playerController,
+            camera: this._playerController.camera
         }
     }
 }
